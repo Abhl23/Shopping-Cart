@@ -62,6 +62,18 @@ class Cart extends React.Component{
         });
     };
 
+    handleDeleteProduct = (id) => {             //can also be passed the product itself for filtering the array
+        console.log('Hey delete the product with id', id);
+
+        const {products}=this.state;
+
+        const items=products.filter((item) => item.id!==id);       //this will return an array with the products not having the id
+
+        this.setState({
+            products : items
+        });
+    };
+
     render(){
 
         const {products}=this.state;
@@ -70,10 +82,11 @@ class Cart extends React.Component{
             <div className='cart'>
                 {products.map((product) => {
                     return <CartItem 
-                                product={product} 
+                                product={product}           //shallow copy of product object in props of CartItem 
                                 key={product.id}
                                 onIncreaseQuantity={this.handleIncreaseQuantity}
                                 onDecreaseQuantity={this.handleDecreaseQuantity}
+                                onDeleteProduct={this.handleDeleteProduct}
                             />
                 })}
             </div>
