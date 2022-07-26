@@ -15,6 +15,7 @@ class App extends React.Component{
         products : [],
         loading : true
     };
+    this.db=firebase.firestore();
   }
 
   componentDidMount(){
@@ -44,8 +45,7 @@ class App extends React.Component{
     //   })
 
 
-    firebase
-      .firestore()
+    this.db
       .collection('products')
       .onSnapshot((snapshot) => {         // attaching a listener to the products collection that listens for any events in the QuerySnapshot object
         console.log(snapshot);
@@ -55,9 +55,9 @@ class App extends React.Component{
         });
 
         const products=snapshot.docs.map((doc) => {
-          let data=doc.data();
+          const data=doc.data();
 
-          data['id']=doc.id;
+          data['id']=doc.id;        // adding id to the data object which is present is the doc object
 
           return data;
         });
@@ -134,6 +134,23 @@ class App extends React.Component{
     return cartTotal;
   };
 
+  addProduct = () => {
+    this.db
+      .collection('products')
+      .add({
+        img : 'https://images.samsung.com/is/image/samsung/p6pim/in/ww90t604dln-tl/gallery/in-front-loading-washer-ww10t604clhs4-ww90t604dln-tl-383418576?$1300_1038_PNG$',
+        price : 8999,
+        qty : 2,
+        title : 'Washing Machine'
+      })
+      .then((docRef) => {
+        console.log('Product has been added', docRef);
+      })
+      .catch((error) => {
+        console.log('Error:', error);
+      });
+  };
+
   render(){
 
     const {products, loading}=this.state;
@@ -143,6 +160,7 @@ class App extends React.Component{
         <Navbar
           count={this.getCartCount()}
         />
+        <button onClick={this.addProduct} style={{padding : 10, fontSize : 20}}>Add Product</button>
         <Cart 
           products={products}
           onIncreaseQuantity={this.handleIncreaseQuantity}
